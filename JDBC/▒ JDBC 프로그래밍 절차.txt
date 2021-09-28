@@ -1,0 +1,44 @@
+■■■ JDBC 프로그래밍 절차 ■■■
+
+1. 드라이버 로딩
+   Class.forName()
+   → Oracle Driver 를 Java에서 사용하기 위해 드라이버를 JVM(자바 가상 머신) 에 로딩하는 과정.
+
+2. 커넥션 할당받기
+   DriverManager.getConnection()
+
+3. 쿼리문 전송을 위한 작업 객체 할당받기
+   Statement 또는 PreparedStatement 할당받기
+   conn.createStatement() 또는 conn.preparedStatement()
+
+4. 작업 객체를 활용하여 쿼리문 전송
+   Statement 또는 PreparedStatement 를 통한 쿼리문 전송
+  
+   ○ DML(insert, update, delete) 문인 경우
+      int updateCount = stmt.executeUpdate(sql);
+      → 영향받은 레코드 수(적용된 행의 개수) 반환
+
+   ○ select 문인 경우
+      ResultSet rs = stmt.executeQuery(sql);
+      → 결과 집합의 형태로 ResultSet 반환
+
+5. (select 구문의 경우)
+   ResultSet 의 논리적 커서 이동을 통해
+   각 컬럼의 데이터를 바인딩 해 온다.
+   
+   boolean b = rs.next();
+   → 커서 이동.
+      커서가 위치한 지점에 레코드가 존재하면 true 를 반환, 없으면 false 를 반환.
+      커서는 가장 선두 첫 번째 레코드의 직전에 위치하고 있다가
+      『next()』가 호출되면 진행한다.
+
+6. 사용을 마친 리소스 반납
+   rs.close();		→ ResultSet 사용했을 경우
+   stmt.close();	→ Statement 사용했을 경우
+   DBConn.close();
+   (null 체크하여 close() 해주는 것을 권장.
+    finally 블럭에서 구현하는 것을 권장.)	
+
+
+
+

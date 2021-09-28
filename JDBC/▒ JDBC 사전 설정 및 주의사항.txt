@@ -1,0 +1,174 @@
+■■■ JDBC 사전 설정 및 주의사항 ■■■
+
+○ 해당 워크스테이션에 오라클이 설치된 경우 (학습 환경)
+    - 시스템 classpath 를 다음과 같이 변경
+    
+       (11g Express Edition 설치 경로가 『C:\oraclexe』 인 경우 )
+       .;C:\oraclexe\app\oracle\product\11.2.0\server\jdbc\lib\ojdbc6.jar
+
+위에 주소 복사해서 파일 탐색기 - 컴퓨터 - 속성 - 고급 시스템 설정 - 환경변수 - 시스템변수 - 새로만들기 
+- 변수명 : CLASSPATH / 변수값 : .;C:\oraclexe\app\oracle\product\11.2.0\server\jdbc\lib\ojdbc6.jar
+
+ (+ 추가로 ojdbc6.jar파일 자주쓰이니까 download 파일에 06_OJDBC 파일 만들어서 넣어놓기!)
+
+       (10g Enterprise Edition/Standard Edition 설치 경로가 『C:\oracle』 인 경우 )
+       .;C:\oracle\product\10.x.x\db_1\jdbc\lib\ojdbc14.jar
+	(10.x.x  과 ojdbc숫자.jar 는 버전에 따라 다름!!)
+
+○ 해당 워크스테이션에 오라클이 설치되어 있지 않은 경우 (실무 환경)
+    - Oracle 용  JDBC 드라이버를 다운로드 해야 한다.
+
+       가. 다운로드 경로
+          ① https://www.oracle.com/database/technologies/appdev/jdbc.html
+		( 이정도는 기억! http : 일반 프로토콜 / https : 보안 프로토콜 )
+          ② 페이지 중간에 Get Started 항목의 JDBC Download 클릭 
+          ③ 현재 (2021년 9월 27일 기준) 다운로드 제공하지 않음.
+          
+       나.파일명 
+          『ojdbc6.jar』 또는 『ojdbc14.jar(10g, 9i등 이전 버전 연동 )』
+
+       다.시스템의 classpath 에 변수값으로 ojdbc6.jar(또는 ojdbc14.jar)
+           파일 추가(경로 포함)
+           
+※ 공통
+    - JDBC 드라이버 설치를 위한 ojdbc6.jar 파일을
+      다음의 경로에 복사&붙여넣기
+
+   가. C:\Program Files\Java\jdkx.x.x\jre\lib\ext
+     (C:\Program Files\Java\jdk1.8.0_221\jre\lib\ext)
+
+   나. C:\Program Files\Java\jrex.x.x\jre\lib\ext
+      (C:\Program Files\Java\jre1.8.0_281\lib\ext)
+
+
+※ JSP 실습을 위한 추가 설정
+   - 아파치톰캣을 c로 빼주는데!!!(중요한건 아파치톰캣 파일을 한번 들어가면 있는 그 아파치톰캣을 복사하는 것!)
+   - 웹 서버에서 실질적으로  Oracle 용 JDBC 드라이버를 찾는 경로는
+     『아파치톰캣루트\lib』 이므로 ojdbc6.jar 파일을
+     이 경로에 복사&붙여넣기 한다.
+
+    - 아파치 톰캣 다운로드 경로 → http://tomcat.apache.org\
+					들어가서 다운로드 들어가서 core 에 zip 받으면 됨!
+
+톰캣(= 웹 컨테이너)를 받기위해서 아파치 톰캣을 받은 것!
+
+
+
+
+- 이클립스 압출파일(eclipse.vol1.egg) 따로 c 에 ecplise 폴더 만들어서 
+거기다가 압출푼다음에 이클립스.exe 실행 (로고 있는 거!)
+
+- 그리고 open perspective 대화창 클릭해서 java 클릭!(그러면 왼쪽 상단 pakage explorer이런거로 바뀜)
+
+- 현재 JDBC 배울 때는 java 나 java ee 둘 중 아무거나 상관없지만! java가 조금 덜 복잡하게 보여진다!
+	(JSP 서블릿으로 넘어가면 java EE 이기 때문에 java EE로 간다!!)
+
+
+- Create a Dynamic Web project 클릭(파일- 뉴-Dynamic Web project / new-Dynamic Web project 다 똑같음!!) 
+-> Project name :  JDBC01 -> 타겟 런타임 : 아파치 톰캣 8.5 -> next -> 톰캣 인스톨레이션 디렉토리 -> 브라우저 클릭
+-> 경로 C:\apache-tomcat-8.5.54 -> finish -> next -> next -> next -> 체크박스 체크안하고 -> finish
+-> 하고나면 중간 밑에 servers탭 -> 밑에 클릭 -> JDBC01 -> ADD -> finish
+
+-> 왼편 상단에 Severs 들어가서 server.xml 더블클릭!!  -> 그리고 밑에 design 탭말고 source탭 선택!
+-> line 63번까지 내려와서 ->    <Connector URIEncoding="UTF-8" connectionTimeout="20000" port="8090" protocol="HTTP/1.1" redirectPort="8443"/> 으로 수정!
+
+-> 창 닫고 중간아래 server탭에 들어가서 밑에 Tomcat v8 5 Server~~~우클릭 Start 클릭 뭐 나오는거 다 허용!
+
+-윈도우텝 - 레버런시스 - 제너럴 노드 확장 - 어피어런스 확장 - 컬러즈앤 폰트 - basic 확장 - 아래 텍스트 폰트
+-> 오른편에 에디트 클릭 - 나눔고딕코딩 - 굵게로 설정 - 폰트크기 16로 일단 설정
+-> 아직 레퍼런스 창에서 -  왼편에 workspace - 아래에 텍스트 파일 인코딩 - other 선택 - UTF-8 - apply클릭
+-> 제너럴 항목아니고 자바항목 노드 확장 - 코드 스타일 - 포매터 - new 클릭 - 프로파일 네임 : standard - ok
+-> 창뜨면 두번째 블레이스 포지션 노드 확장 - 어레이 이니셜라이저 빼고 전부 next line -  어플라이 - 오케이 - 어플라이 앤 오케이
+
+
+- 파일 익스퍼트 제너럴 프리퍼런시스 - next - 익스퍼트 올 체크 
+-> 경로 씨드라이브 - 다운로드 - 09_epf - standard 확인 - 피니쉬!
+
+- 왼쪽 상단 JDBC01 노드 확장 - Java Resources - src - 우클릭 - 뉴 - 패키지 - 이름 : com.test - finish
+-> com.test 우클릭 뉴 클래스 이름 : Test001 엔터 빵
+-> 이렇게 하고 자바 코드 입력 시작하면됨!! (public static void main(String[] args) 했는데!!)
+main 쓰고 ctrl + space + enter 하면 public static void main(String[] args 만들어짐
+Sysout 쓰고 ctrl + space 하면 System.out.println(); 만들어짐!! 오예!
+
+이제는 다 치는게 아니라 Ctrl + space 가 습관적으로!
+
+컴파일은 ctrl + f11 -> Java application 누르고 엔터!
+
+- 작업창 더블클릭하면 화면이 커지고 다시 더블클릭하면 화면이 줄어듦
+
+
+- src 에서 뉴 우클릭 패키지 만들기 - 이름 : com.util - f5 새로고침
+-> com.util에서 뉴 클래스 만들기 이름 : DBConn
+
+/*=======================
+ 	DBConn.java
+=========================*/
+
+
+package com.util;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+
+public class DBConn
+{
+	public static Connection dbConn;
+	
+	public static Connection getConnextion()
+	{
+		if(dbConn == null)
+		{
+			try
+			{
+				String url = "jdbc:oracle:thin@lacalhost:1521:xe";
+				String user = "scott";
+				String pwd = "tiger";
+				
+				Class.forName("oracle.jdbc.driver.OracleDriver");
+				
+				dbConn = DriverManager.getConnection(url,user, pwd);
+				
+			} catch (Exception e)
+			{
+				System.out.println(e.toString());
+			}
+		}
+		return dbConn;
+	}
+	public static void close()
+	{
+		if(dbConn != null)
+		{
+			try
+			{
+				if (!dbConn.isClosed())
+					dbConn.close();
+			}catch (Exception e)
+			{
+				System.out.println(e.toString());
+			}
+		
+		}
+		
+		dbConn = null;
+	}
+	
+}
+
+
+-- 에디트플러스에서는 컴파일을 ctrl + 1 / ctrl + 2 했는데
+--> C:\JDBCStudy\JDBC01 여기 경로 따라 들어가면 build 와 src 파일이 있는데
+--> build 에는 class파일이 src 에는 java파일이 있음!
+--> 나중에 배포할때는 build 만 배포하면 됨! (class만!)
+
+
+-- ctrl + d : 한줄 삭제
+-- ctrl + space 했을 때 나오는 
+I(인터페이스) 
+C(클래스) 
+E(이누머레이션) 
+C(A붙어있는거 - 추상) 
+C(사선있는거 - 왠만하면 쓰지마라! 대체되는 것이 나왔다는 뜻)
+
+
+
