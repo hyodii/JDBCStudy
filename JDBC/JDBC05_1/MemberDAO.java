@@ -1,5 +1,5 @@
 /*========================================
-   			MemberDAO.java
+   		MemberDAO.java
    	- 데이터베이스 액션처리전용 객체 
 ==========================================*/
 // 주요 속성 정의
@@ -101,107 +101,68 @@ public class MemberDAO
 				break;
 			}
 			
-			switch (menu)
+			// 쿼리문 준비
+			String sql = "SELECT EMP_ID,EMP_NAME,SSN,IBSADATE"
+					+ ",(SELECT CITY_NAME FROM TBL_CITY C WHERE C.CITY_ID = T.CITY_ID) CITY_NAME"
+					+ ",TEL"
+					+ ",(SELECT BUSEO_NAME FROM TBL_BUSEO B WHERE B.BUSEO_ID = T.BUSEO_ID) BUSEO_NAME"
+					+ ",(SELECT JIKWI_NAME FROM TBL_JIKWI J WHERE J.JIKWI_ID = T.JIKWI_ID) JIKWI_NAME"
+					+ ",BASICPAY,SUDANG"
+					+ ",(NVL(BASICPAY,0)*12)+SUDANG AS SALARY "
+					+ "FROM TBL_EMP T ";
+			
+			switch (menu)	// ★switch 쓰는거 check~!!★
 			{
-				case 1:
-					//직원 전체(1.사번 정렬)
-					String sql = "SELECT EMP_ID,EMP_NAME,SSN,IBSADATE"
-							+ ",(SELECT CITY_NAME FROM TBL_CITY C WHERE C.CITY_ID = T.CITY_ID) CITY_NAME"
-							+ ",TEL"
-							+ ",(SELECT BUSEO_NAME FROM TBL_BUSEO B WHERE B.BUSEO_ID = T.BUSEO_ID) BUSEO_NAME"
-							+ ",(SELECT JIKWI_NAME FROM TBL_JIKWI J WHERE J.JIKWI_ID = T.JIKWI_ID) JIKWI_NAME"
-							+ ",BASICPAY,SUDANG"
-							+ ",(NVL(BASICPAY,0)*12)+SUDANG AS SALARY "
-							+ "FROM TBL_EMP T "
-							+ "ORDER BY T.EMP_ID";
-					break;
-	
-				case 2:
-					//직원 전체(2.이름 정렬)
-					String sql = "SELECT EMP_ID,EMP_NAME,SSN,IBSADATE"
-							+ ",(SELECT CITY_NAME FROM TBL_CITY C WHERE C.CITY_ID = T.CITY_ID) CITY_NAME"
-							+ ",TEL"
-							+ ",(SELECT BUSEO_NAME FROM TBL_BUSEO B WHERE B.BUSEO_ID = T.BUSEO_ID) BUSEO_NAME"
-							+ ",(SELECT JIKWI_NAME FROM TBL_JIKWI J WHERE J.JIKWI_ID = T.JIKWI_ID) JIKWI_NAME"
-							+ ",BASICPAY,SUDANG"
-							+ ",(NVL(BASICPAY,0)*12)+SUDANG AS SALARY "
-							+ "FROM TBL_EMP T "
-							+ "ORDER BY T.EMP_NAME";
-					break;
+				//직원 전체(1.사번 정렬)
+				case 1: sql += "ORDER BY T.EMP_ID"; break;
+				
+				//직원 전체(2.이름 정렬)
+				case 2: sql += "ORDER BY T.EMP_NAME"; break;
+				
+				//직원 전체(3.부서 정렬)
+				case 3: sql += "ORDER BY BUSEO_NAME"; break;
 					
-				case 3:
-					//직원 전체(3.부서 정렬)
-					String sql = "SELECT EMP_ID,EMP_NAME,SSN,IBSADATE"
-							+ ",(SELECT CITY_NAME FROM TBL_CITY C WHERE C.CITY_ID = T.CITY_ID) CITY_NAME"
-							+ ",TEL"
-							+ ",(SELECT BUSEO_NAME FROM TBL_BUSEO B WHERE B.BUSEO_ID = T.BUSEO_ID) BUSEO_NAME"
-							+ ",(SELECT JIKWI_NAME FROM TBL_JIKWI J WHERE J.JIKWI_ID = T.JIKWI_ID) JIKWI_NAME"
-							+ ",BASICPAY,SUDANG"
-							+ ",(NVL(BASICPAY,0)*12)+SUDANG AS SALARY "
-							+ "FROM TBL_EMP T "
-							+ "ORDER BY BUSEO_NAME";
-					break;
+				//직원 전체(4.직위 정렬)
+				case 4: sql += "ORDER BY JIKWI_NAME"; break;
 					
-				case 4:
-					//직원 전체(4.직위 정렬)
-					String sql = "SELECT EMP_ID,EMP_NAME,SSN,IBSADATE"
-							+ ",(SELECT CITY_NAME FROM TBL_CITY C WHERE C.CITY_ID = T.CITY_ID) CITY_NAME"
-							+ ",TEL"
-							+ ",(SELECT BUSEO_NAME FROM TBL_BUSEO B WHERE B.BUSEO_ID = T.BUSEO_ID) BUSEO_NAME"
-							+ ",(SELECT JIKWI_NAME FROM TBL_JIKWI J WHERE J.JIKWI_ID = T.JIKWI_ID) JIKWI_NAME"
-							+ ",BASICPAY,SUDANG"
-							+ ",(NVL(BASICPAY,0)*12)+SUDANG AS SALARY "
-							+ "FROM TBL_EMP T "
-							+ "ORDER BY JIKWI_NAME";
-					break;
+				//직원 전체(5.급여 내림차순 정렬)
+				case 5: sql += "ORDER BY SALARY DESC"; break;
 					
-				case 5:
-					//직원 전체(5.급여 내림차순 정렬)
-					String sql = "SELECT EMP_ID,EMP_NAME,SSN,IBSADATE"
-							+ ",(SELECT CITY_NAME FROM TBL_CITY C WHERE C.CITY_ID = T.CITY_ID) CITY_NAME"
-							+ ",TEL"
-							+ ",(SELECT BUSEO_NAME FROM TBL_BUSEO B WHERE B.BUSEO_ID = T.BUSEO_ID) BUSEO_NAME"
-							+ ",(SELECT JIKWI_NAME FROM TBL_JIKWI J WHERE J.JIKWI_ID = T.JIKWI_ID) JIKWI_NAME"
-							+ ",BASICPAY,SUDANG"
-							+ ",(NVL(BASICPAY,0)*12)+SUDANG AS SALARY "
-							+ "FROM TBL_EMP T "
-							+ "ORDER BY SALARY DESC";
-					break;
 			}
 			
+			ResultSet rs = stmt.executeQuery(sql);
+			while(rs.next())
+			{
+				MemberDTO dto = new MemberDTO();
+				
+				dto.setEmpid(rs.getString("EMP_ID"));
+				dto.setEmpname(rs.getString("EMP_NAME"));
+				dto.setSsn(rs.getString("SSN"));
+				dto.setIbsadate(rs.getString("IBSADATE"));
+				dto.setCityid(rs.getString("CITY_NAME"));
+				dto.setTel(rs.getString("TEL"));
+				dto.setBuseoid(rs.getString("BUSEO_NAME"));
+				dto.setJikweid(rs.getString("JIKWI_NAME"));
+				dto.setBasicpay(rs.getInt("BASICPAY"));
+				dto.setSudang(rs.getInt("SUDANG"));
+				dto.setSalary(rs.getInt("BASICPAY"), rs.getInt("SUDANG"));
+				
+				result.add(dto);
+				
+			}
+			
+			rs.close();
+			stmt.close();
 			
 		} while (true);
 				
-		ResultSet rs = stmt.executeQuery(sql);
-		while(rs.next())
-		{
-			MemberDTO dto = new MemberDTO();
-			
-			dto.setEmpid(rs.getString("EMP_ID"));
-			dto.setEmpname(rs.getString("EMP_NAME"));
-			dto.setSsn(rs.getString("SSN"));
-			dto.setIbsadate(rs.getString("IBSADATE"));
-			dto.setCityid(rs.getString("CITY_NAME"));
-			dto.setTel(rs.getString("TEL"));
-			dto.setBuseoid(rs.getString("BUSEO_NAME"));
-			dto.setJikweid(rs.getString("JIKWI_NAME"));
-			dto.setBasicpay(rs.getInt("BASICPAY"));
-			dto.setSudang(rs.getInt("SUDANG"));
-			dto.setSalary(rs.getInt("BASICPAY"), rs.getInt("SUDANG"));
-			
-			result.add(dto);
-			
-		}
-		rs.close();
-		stmt.close();
-		
-	
 		return result;
+
 	}
 	
 	//직원 검색 출력 메소드 정의
 	// int - 1.사번 검색 / String - 2.이름 검색 3.부서 검색 4.직위 검색
-	public ArrayList<MemberDTO> lists(int empid)
+	public ArrayList<MemberDTO> lists(int empid) throws SQLException
 	{
 		ArrayList<MemberDTO> result = new ArrayList<MemberDTO>();
 		Statement stmt = conn.createStatement();
@@ -229,7 +190,10 @@ public class MemberDAO
 			dto.setEmpname(rs.getString("EMP_NAME"));
 			dto.setSsn(rs.getString("SSN"));
 			dto.setIbsadate(rs.getString("IBSADATE"));
-			dto.setCityid(rs.getString(columnIndex));	// ???
+			dto.setCityid(rs.getString("CITY_ID"));		// ??? → 속성값 DTO 에서 만들 때 값을 네임으로 안받고 ID로 받아서 애매
+														//			그러니까 만들 때 속성값 잘 생각하고 만들어야함!!
+			dto.setBuseoid(rs.getString("BUSEO_ID"));
+			// dto. ~ 더 추가해야함!
 		}
 		
 		return result;
@@ -286,17 +250,7 @@ public class MemberDAO
 // 입사DATE 는 TO_CAHR()변환해서 가지고 와야함!
 
 
-
-
-
-
-
-
-
-
-
-
-
+// JDBC05_2 → 의문 다 해결!
 
 
 
